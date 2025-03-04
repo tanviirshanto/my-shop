@@ -1,0 +1,14 @@
+we have a corrugated tin sheet shop where we buy tin as ton. As u know tin has different thickness, each tickness has diffrent pieces in a ton. Besides, each tin has diffrent length. for ur understanding i am providing u how many piece for thickness and feet,
+
+for thickness 120,150,170,190,200,260,25,30 :
+	6 feet =282ps, 7 feet =241ps, 8 feet =211ps, 9 feet =188ps, 10 feet =169ps
+
+for thickness 320,340,35 :
+	6 feet =224ps, 7 feet =192ps, 8 feet =168ps, 9 feet =149ps, 10 feet =134ps
+for thickness 420,42,48,64 :
+	6 feet =282ps, 7 feet =241ps, 8 feet =211ps, 9 feet =188ps, 10feet =169ps
+
+Now while i am selling, i sale in three ways. One is directly in ton, second in bundle, third in pieces. For ur knowing, 6feet has 12ps in a bundle, 7feet has 10ps in a bundle,
+8feet has 9ps in a bundle, 9feet has 8ps in a bundle, 10feet has 7ps in a bundle and 12feet has 6ps in a bundle. 11feet cannot be sold in bundle so it is being sold in per piece.
+
+Now find a equation for finding ItemPrice where pieces will be given with thickness and height and price also. for price it may be in price/ton or in price/bundle or price/pieces.But it will not be said that price for ton or bundle or pieces. to diiferenciate that price is given in ton or bundle, i analysed that bundle never go higher than 20,000 taka and ton always higher than 20,000 taka. And for price/pieces , only 11feet is calculated in price/pieces . 
