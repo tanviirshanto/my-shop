@@ -36,7 +36,7 @@ export async function POST(request) {
       stock.availableQty += Number(boughtQty);
     }
 
-    await stock.save();
+    await stock.save(); 
 
     // Step 3: Save the purchase history
     const newPurchase = new Purchase({

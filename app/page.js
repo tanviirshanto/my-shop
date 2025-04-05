@@ -1,126 +1,44 @@
-// app/page.jsx
-"use client"; // Mark as a Client Component
+import Image from "next/image";
+import HomeItemCard from "./components/HomeItemCard";
+import HomeSingleCard from "./components/HomeSingleCard";
+import HomeStatCard from "./components/HomeStatCard";
+import { getCurrentMonthAndYear } from "@/utils/functions";
+import Link from "next/link";
 
-import { useState } from "react";
-import ProductList from "./components/ProductList";
-import AddProductForm from "./components/AddProductForm";
-import CustomerList from "./components/CustomerList";
-import AddCustomerForm from "./components/AddCustomerForm";
-import PurchaseList from "./components/PurchaseList";
-import AddPurchaseForm from "./components/AddPurchaseForm";
-import StockList from "./components/StockList";
-
-
+const items = [
+  {
+    title: "Roofing Sheet",
+    url: "/",
+  },
+];
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("products"); // Default to "products" tab
-  const [refreshProducts, setRefreshProducts] = useState(false);
-  const [refreshCustomers, setRefreshCustomers] = useState(false);
-  const [refreshPurchases, setRefreshPurchases] = useState(false);
-  const [refreshStock, setRefreshStock] = useState(false);
-  const [refreshInvoice, setRefreshInvoice] = useState(false);
-
-
-  // Handle product added
-  const handleProductAdded = () => {
-    setRefreshProducts(!refreshProducts); // Toggle refresh state to refetch products
-  };
-
-  // Handle customer added
-  const handleCustomerAdded = () => {
-    setRefreshCustomers(!refreshCustomers); // Toggle refresh state to refetch customers
-  };
-
-  // Handle purchase added
-  const handlePurchaseAdded = () => {
-    setRefreshPurchases(!refreshPurchases); // Toggle refresh state to refetch purchases
-    setRefreshStock(!refreshStock); // Also refresh the stock list
-  };
-
-    // Handle invoice added
-    const handleInvoiceAdded = () => {
-      setRefreshInvoice(!refreshInvoice); // Toggle refresh state to refetch Invoices
-    };
+  const { month, year } = getCurrentMonthAndYear();
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">Shop Management</h1>
+    <div className="flex justify-center flex-col items-center m-10 w-[80%] mx-auto gap-10">
+     
+    <Link href="/monthly-statistics" ><HomeStatCard year={year} month={month} />
+    </Link> 
+      <div className="flex justify-between items-center gap-8">
 
-      {/* Tabs for switching between Products, Customers, Purchases, and Stock */}
-      <div className="tabs">
-        <button
-          className={`tab tab-bordered ${activeTab === "products" ? "tab-active text-white" : ""}`}
-          onClick={() => setActiveTab("products")}
-        >
-          Products
-        </button>
-        <button
-          className={`tab tab-bordered ${activeTab === "customers" ? "tab-active text-white" : ""}`}
-          onClick={() => setActiveTab("customers")}
-        >
-          Customers
-        </button>
-        <button
-          className={`tab tab-bordered ${activeTab === "purchases" ? "tab-active text-white" : ""}`}
-          onClick={() => setActiveTab("purchases")}
-        >
-          Purchases
-        </button>
-        <button
-          className={`tab tab-bordered ${activeTab === "stock" ? "tab-active text-white" : ""}`}
-          onClick={() => setActiveTab("stock")}
-        >
-          Stock
-        </button>
-        <button
-          className={`tab tab-bordered ${activeTab === "invoice" ? "tab-active text-white" : ""}`}
-          onClick={() => setActiveTab("invoice")}
-        >
-          Invoice
-        </button>
+        <HomeSingleCard
+          name="Invoice"
+          btnName="Create invoice"
+          btnUrl="/invoice"
+        />
+        <HomeSingleCard
+          name="Purchase"
+          btnName="Add purchase"
+          btnUrl="/purchase"
+        />
+        <HomeSingleCard
+          name="Stock Book"
+          btnName="Check stocks"
+          btnUrl="/stockBook"
+        />
       </div>
-
-      {/* Products Tab Content */}
-      {activeTab === "products" && (
-        <div>
-          <AddProductForm onProductAdded={handleProductAdded} />
-          <div className="mt-8 text-center">
-            <ProductList refresh={refreshProducts} />
-          </div>
-        </div>
-      )}
-
-      {/* Customers Tab Content */}
-      {activeTab === "customers" && (
-        <div>
-          <AddCustomerForm onCustomerAdded={handleCustomerAdded} />
-          <div className="mt-8">
-            <CustomerList refresh={refreshCustomers} />
-          </div>
-        </div>
-      )}
-
-      {/* Purchases Tab Content */}
-      {activeTab === "purchases" && (
-        <div>
-          <AddPurchaseForm onPurchaseAdded={handlePurchaseAdded} />
-          <div className="mt-8">
-            <PurchaseList refresh={refreshPurchases} />
-          </div>
-        </div>
-      )}
-
-      {/* Stock Tab Content */}
-      {activeTab === "stock" && (
-        <div>
-          <div className="mt-8">
-            <StockList refresh={refreshStock} />
-          </div>
-        </div>
-      )}
-
-      
-
+      <HomeItemCard />
     </div>
   );
 }

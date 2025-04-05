@@ -15,7 +15,7 @@ export async function GET(request) {
     const skip = (page - 1) * limit;
 
     const products = await Product.find({})
-      .sort({ height: 1, thickness: 1 })
+      .sort({ thickness: 1, height: 1 })
       .skip(skip)
       .limit(limit);
 
@@ -24,7 +24,10 @@ export async function GET(request) {
 
     return NextResponse.json({ products, totalPages }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch products" },
+      { status: 500 }
+    );
   }
 }
 
@@ -65,7 +68,8 @@ export async function POST(request) {
 // PUT: Update a product by ID
 export async function PUT(request) {
   try {
-    const { id, thickness, height, price, color, company } = await request.json();
+    const { id, thickness, height, price, color, company } =
+      await request.json();
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
@@ -106,10 +110,16 @@ export async function DELETE(request) {
       });
     }
 
-    return new Response(JSON.stringify({ message: "Product deleted successfully" }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Delete the corresponding stock item
+    await Stock.deleteOne({ product: deletedProduct._id });
+
+    return new Response(
+      JSON.stringify({ message: "roduct and associated stock deleted successfully" }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     return new Response(JSON.stringify({ error: "Failed to delete product" }), {
       status: 500,

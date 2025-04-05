@@ -3,7 +3,7 @@ import Product from "./product";
 
 const sellSchema = new mongoose.Schema({
   product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
-  soldQty: { type: Number, required: true, min: 1 },
+  soldQty: { type: Number, required: true },
   customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
   date: { type: Date, default: Date.now }
 }, { timestamps: true });

@@ -25,45 +25,56 @@ export async function GET() {
   }
 }
 
-
-
 // POST: Add a new value to a specific field
-export async function POST(request) {
-  
-    try {
-      const { field, value } = await request.json();
 
-      console.log(field,value);
-  
-      if (!field || !value) {
-        return new Response(JSON.stringify({ error: "Field and value are required" }), { status: 400 });
-      }
-  
-      // Ensure the config document exists
-      let config = await Config.findOne({});
-      if (!config) {
-        config = await Config.create({
-          thicknesses: [],
-          heights: [],
-          colors: [],
-          companies: [],
-        });
-      }
-  
+
+export async function POST(request) {
+  try {
+    const { field, value } = await request.json();
+
+    console.log(field, value);
+
+    if (!field || !value) {
+      return new Response(
+        JSON.stringify({ error: "Field and value are required" }),
+        { status: 400 }
+      );
+    }
+
+    // Ensure the config document exists
+    let config = await Config.findOne({});
+    if (!config) {
+      config = await Config.create({
+        thicknesses: [],
+        heights: [],
+        colors: [],
+        companies: [],
+      });
+    }
+
+    // Check if the field exists in the schema before attempting to update
+    if (config.schema.paths[field]) {
       // Push new value to the specified field
       const updatedConfig = await Config.findOneAndUpdate(
         {},
         { $addToSet: { [field]: value } }, // `$addToSet` prevents duplicates
         { new: true }
       );
-  
+
       return new Response(JSON.stringify(updatedConfig), { status: 201 });
-  
-    } catch (error) {
-      console.error("Error adding item:", error);
-      return new Response(JSON.stringify({ error: "Failed to add item" }), { status: 500 });
+    } else {
+      return new Response(
+        JSON.stringify({ error: `Field "${field}" does not exist.` }),
+        { status: 400 }
+      );
     }
+  } catch (error) {
+    console.error("Error adding item:", error);
+    return new Response(JSON.stringify({ error: "Failed to add item" }), {
+      status: 500,
+    });
   }
+}
 
 // PUT: Edit an existing value in a specific field
 export async function PUT(request) {

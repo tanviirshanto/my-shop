@@ -8,9 +8,23 @@ await connectDB();
 
 export async function GET(request) {
   try {
-    const stocks = await Stock.find({}).populate("product");
-    console.log("Stocks:", stocks);
-    return NextResponse.json({ success: true, data: stocks }, { status: 200 });
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page")) || 1;
+    const limit = parseInt(searchParams.get("limit")) || 10;
+    const skip = (page - 1) * limit;
+
+    const stocks = await Stock.find({})
+      .sort({ thickness: 1 })
+      .populate("product")
+      .skip(skip)
+      .limit(limit);
+
+    const totalStocks = await Stock.countDocuments({});
+
+    return NextResponse.json(
+      { success: true, data: stocks, total: totalStocks, page, limit },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },
@@ -27,7 +41,7 @@ export async function POST(request) {
 
     // Check if product exists
     const foundProduct = await Product.findById(productId);
-  
+
     // if (!foundProduct) {
     //   return NextResponse.json(
     //     { success: false, message: "Product not found" },

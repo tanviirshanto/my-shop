@@ -2,9 +2,13 @@ import mongoose from "mongoose";
 import Product from "./product";
 
 const purchaseSchema = new mongoose.Schema({
-  product: { type: mongoose.Schema.Types.ObjectId, ref: "Product", required: true },
-  boughtQty: { type: Number, required: true, min: 1 },
+  purchaseItems: [{ 
+      product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" }, 
+      boughtQty: { type: Number, required: true, min: 1 },
+      itemTotal: { type: Number, required: true, min: 0 },
+    }],
   company: { type: String, required: true },
+  totalAmount: { type: Number, required: true, min: 0 },
   date: { type: Date, default: Date.now }
 }, { timestamps: true });
 

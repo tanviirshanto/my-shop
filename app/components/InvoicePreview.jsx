@@ -51,14 +51,14 @@ const InvoicePreview = ({ invoiceData , setInvoiceData, customerName }) => {
   };
 
   return (
-    <div className="w-1/2 p-4 ">
+    <div className="w-1/3 p-4 ">
       <h2 className="text-2xl font-bold mb-4"> Preview</h2>
 
       <div ref={invoiceRef}>
         <div className="mb-4">
-          <h3 className="text-lg font-semibold">Customer Details</h3>
-          <p>Customer ID: {customerName}</p>
-          <p>Payment Status: {invoiceData.payment}</p>
+        <h3 className="text-lg "> <span className='font-semibold'>Date:</span> {invoiceData.date}</h3>
+          <p> <span className='font-semibold'>Customer Name:</span> {customerName}</p>
+          <p> <span className='font-semibold' >Payment Status:</span> {invoiceData.payment}</p>
         </div>
 
         <div className="mb-4">

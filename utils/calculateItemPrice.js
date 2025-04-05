@@ -6,16 +6,25 @@ const calculateItemPrice = (height, thickness, soldQty, price) => {
   const isBundle = height !== "11" && price < 20000;
   const isBundle11ft = height === "11" && price < 20000;
   const isTonPricing = price > 20000;
+  const isRidgingOrTunnel = price<2000 ;
 
+  if (isRidgingOrTunnel) {
+    console.log("Ridging Or Tunnel");
+    return Math.floor(price * soldQty);
+  }
+  
   if (isBundle) {
     console.log("Bundle");
     return Math.floor((price * soldQty) / Math.floor(72 / heightNum));
   }
+  
   if (isBundle11ft) {
     console.log("Bundle 11ft");
     return Math.floor((price * soldQty * 11) / 72);
   }
+
   if (isTonPricing) {
+    console.log("Ton pricing");
     if (thkGroupOne.includes(thickness.trim())) {
       console.log("Light weight");
       return Math.floor((price * soldQty) / Math.floor(1692 / heightNum));

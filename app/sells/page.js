@@ -27,7 +27,7 @@ export default function Sells() {
     }
   };
 
-  const fetchConfig = async () => {
+  const fetchConfig = async () => {sells
     try {
       const res = await axios.get("/api/config");
       setConfig(res.data);

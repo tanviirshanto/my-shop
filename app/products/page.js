@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -10,7 +11,7 @@ export default function Products() {
   const [message, setMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 5; // Adjust as needed
+  const itemsPerPage = 9; // Adjust as needed
 
   useEffect(() => {
     fetchProducts();
@@ -143,6 +144,7 @@ export default function Products() {
             </button>
           </form>
         </div>
+        { products? 
         <div className="lg:grid-cols-2 overflow-x-auto">
           <table className="table w-full shadow-md rounded-lg">
             <thead>
@@ -172,7 +174,7 @@ export default function Products() {
             </tbody>
           </table>
           {renderPagination()}
-        </div>
+        </div>: "No product to show." }
       </div>
     </div>
   );

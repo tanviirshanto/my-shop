@@ -8,7 +8,6 @@ export default function Customers() {
   const [customers, setCustomers] = useState([]);
   const [form, setForm] = useState({
     name: "",
-    email: "",
     phone: "",
     address: "",
   });
@@ -38,7 +37,7 @@ export default function Customers() {
       } else {
         await axios.post("/api/customers", form);
       }
-      setForm({ name: "", email: "", phone: "", address: "" });
+      setForm({ name: "", phone: "", address: "" });
       setEditingCustomerId(null);
       fetchCustomers();
       setMessage("Operation successful!");
@@ -94,14 +93,7 @@ export default function Customers() {
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               required
             />
-            <input
-              className="input input-bordered"
-              type="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              required
-            />
+            
             <input
               className="input input-bordered"
               type="text"
@@ -129,7 +121,6 @@ export default function Customers() {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Email</th>
                 <th>Phone</th>
                 <th>Address</th>
                 <th>Actions</th>
@@ -147,7 +138,6 @@ export default function Customers() {
                       {customer.name}
                     </Link>{" "}
                   </td>
-                  <td>{customer.email}</td>
                   <td>{customer.phone}</td>
                   <td>{customer.address}</td>
                   <td className=" flex gap-2">

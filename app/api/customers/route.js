@@ -24,11 +24,10 @@ export async function GET() {
 // POST: Create a new customer
 export async function POST(request) {
   try {
-    const { name, email, phone, address } = await request.json();
+    const { name, phone, address } = await request.json();
 
     const newCustomer = new Customer({
       name,
-      email,
       phone,
       address,
     });
@@ -50,11 +49,11 @@ export async function POST(request) {
 // PUT: Update a customer by ID
 export async function PUT(request) {
   try {
-    const { id, name, email, phone, address } = await request.json();
+    const { id, name, phone, address } = await request.json();
 
     const updatedCustomer = await Customer.findByIdAndUpdate(
       id,
-      { name, email, phone, address },
+      { name, phone, address },
       { new: true } // Return the updated document
     );
 

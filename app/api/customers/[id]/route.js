@@ -6,12 +6,12 @@ await connectDB();
 
 export async function PUT(request, { params }) {
   try {
-    const { name, email, phone, address } = await request.json();
+    const { name, phone, address } = await request.json();
     const { id } = params;
 
     const updatedCustomer = await Customer.findByIdAndUpdate(
       id,
-      { name, email, phone, address },
+      { name, phone, address },
       { new: true, runValidators: true } // Return updated doc, run validators
     );
 

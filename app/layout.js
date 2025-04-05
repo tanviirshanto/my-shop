@@ -2,6 +2,14 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { Toaster } from "react-hot-toast";
+import { RiHome5Fill } from "react-icons/ri";
+import { FaFileInvoiceDollar } from "react-icons/fa";
+import { BiSolidPurchaseTag } from "react-icons/bi";
+import { IoBook } from "react-icons/io5";
+import { MdPeople } from "react-icons/md";
+import Navbar from "./components/navbar";
+import SessionWrapper from "@/lib/SessionWrapper";
+import ProgressBar from "@/lib/ProgressBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,12 +30,25 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning>
-          <div><Toaster/></div>
-          <div className="flex flex-wrap gap-3 justify-center mt-5 " > <Link href="/products"> Products </Link> <Link href="/invoice"> Invoice </Link> <Link href="/sells"> Sells </Link> <Link href="/purchases"> Purchases </Link> <Link href="/stocks"> Stocks </Link>
-          <Link href="/customers"> Customers </Link> <Link href="/configs"> Configs </Link>  </div>
+        className={`${geistSans.variable} ${geistMono.variable} antialiased `}
+        suppressHydrationWarning
+      ><ProgressBar />
+        <div>
+          <Toaster />
+        </div>
+        <SessionWrapper>
+        
+        <Navbar />
+        {/* <div className="flex w-[80%] flex-wrap gap-5 justify-center mt-5 mx-auto " >
+          <Link href="/" className="flex text-lg gap-1 items-center no-underline hover:underline transition duration-300 text-green-400 hover:text-green-700"><RiHome5Fill /> Home </Link>  <Link href="/invoice" className="flex gap-1 items-center no-underline hover:underline transition duration-300 text-blue-400 hover:text-blue-700"><FaFileInvoiceDollar/>  Invoice </Link><Link href="/purchase" className="flex gap-1 items-center no-underline hover:underline transition duration-300 text-blue-400 hover:text-blue-700"><BiSolidPurchaseTag/> Purchase </Link><Link href="/stockBook" className="flex gap-1 items-center no-underline hover:underline transition duration-300 text-blue-400 hover:text-blue-700"><IoBook/> StockBook </Link>
+          <Link href="/customers" className="flex gap-1 items-center no-underline hover:underline transition duration-300 text-blue-400 hover:text-blue-700"> <MdPeople/> Customers </Link> </div> */}
         {children}
+        </SessionWrapper>
+        <footer className="footer footer-center p-4 bg-base-200 text-base-content">
+          <div>
+            <p>Copyright © 2025 - All right reserved by Tanvir Hossen Shanto</p>
+          </div>
+        </footer>
       </body>
     </html>
   );
