@@ -36,6 +36,12 @@ export async function POST(request) {
   try {
     const { thickness, height, price, color, company } = await request.json();
 
+    const existingProduct = await Product.findOne({thickness, height, color, company});
+
+    if (existingProduct) {
+      throw new Error("Product already exists");
+    }
+
     const newProduct = new Product({
       thickness,
       height,

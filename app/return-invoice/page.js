@@ -9,6 +9,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import QuickButtons from "../components/quickButtons";
 import QuickPriceButton from "../components/quickPriceButton";
+import dynamic from "next/dynamic";
 
 const InvoicePage = () => {
   const [singleItem, setSingleItem] = useState({
@@ -355,4 +356,5 @@ const InvoicePage = () => {
   );
 };
 
-export default InvoicePage;
+
+export default dynamic(() => Promise.resolve(InvoicePage), { ssr: false });

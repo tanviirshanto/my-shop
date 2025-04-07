@@ -19,7 +19,8 @@ export async function POST(request) {
   try {
     const body = await request.json();
     console.log("Invoice Body:", body);
-    const { invoiceItems, customerId, payment, totalAmount, amountPaid,date } = body;
+    const { invoiceItems, customerId, payment, totalAmount, amountPaid, date } =
+      body;
 
     let buyingTotal = 0;
     const modifiedInvoiceItems = []; // Create a new array to store modified invoice items.
@@ -51,32 +52,13 @@ export async function POST(request) {
 
       const buyingPrice = Number(foundProduct.price);
 
-      // x is total buying price of the product 
+      // x is total buying price of the product
       let x = 0;
 
       // Calculate the buying price of ridging
-      if (price < 2000 && height === "6") {
-        if (thkGroupOne.includes(thickness.toString().trim())) {
-          x = Math.floor(
-            (buyingPrice / Math.floor(1692 / Number(height)) / 3) * soldQty
-          );
-        } else if (thkGroupTwo.includes(thickness.toString().trim())) {
-          x = Math.floor(
-            (buyingPrice / Math.floor(1344 / Number(height)) / 3) * soldQty
-          );
-        } else if (thkGroupThree.includes(thickness.toString().trim())) {
-          x = Math.floor(
-            (buyingPrice / Math.floor(1053 / Number(height)) / 3) * soldQty
-          );
-        } else {
-          return NextResponse.json(
-            { error: "Program Error related to product calculations." },
-            { status: 500 }
-          );
-        }
-      } else if (price < 2000 && height !== "6") {
+      if (price < 2000) {
         x = Math.floor(buyingPrice * soldQty);
-      } else if (price < 20000 && height !== "11") {
+      } else if (price > 2000 && price < 20000 && height !== "11") {
         if (thkGroupOne.includes(thickness.toString().trim())) {
           const buyingPriceInBundle = Math.floor(
             (buyingPrice * (72 / height)) / Math.floor(1692 / Number(height))
@@ -99,7 +81,26 @@ export async function POST(request) {
             (buyingPriceInBundle * soldQty) / Math.floor(72 / Number(height))
           );
         }
-      } else if (price > 20000) {
+      }
+      else if (price < 20000 && height === "11") {
+        if (thkGroupOne.includes(thickness.toString().trim())) {
+          const buyingPriceInBundle = Math.floor(
+            (buyingPrice * (72 / height)) / Math.floor(1692 / Number(height))
+          );
+          x = Math.floor((buyingPriceInBundle * soldQty * Number(height)) / 72);
+        } else if (thkGroupTwo.includes(thickness.toString().trim())) {
+          const buyingPriceInBundle = Math.floor(
+            (buyingPrice * (72 / height)) / Math.floor(1344 / Number(height))
+          );
+          x = Math.floor((buyingPriceInBundle * soldQty * Number(height)) / 72);
+        } else if (thkGroupThree.includes(thickness.toString().trim())) {
+          const buyingPriceInBundle = Math.floor(
+            (buyingPrice * (72 / height)) / Math.floor(1053 / Number(height))
+          );
+          x = Math.floor((buyingPriceInBundle * soldQty * Number(height)) / 72);
+        }
+      }
+       else if (price > 20000) {
         if (thkGroupOne.includes(thickness.toString().trim())) {
           x = Math.floor(
             (buyingPrice * soldQty) / Math.floor(1692 / Number(height))
@@ -118,23 +119,6 @@ export async function POST(request) {
             { status: 500 }
           );
         }
-      } else if (price < 20000 && height === "11") {
-        if (thkGroupOne.includes(thickness.toString().trim())) {
-          const buyingPriceInBundle = Math.floor(
-            (buyingPrice * (72 / height)) / Math.floor(1692 / Number(height))
-          );
-          x = Math.floor((buyingPriceInBundle * soldQty * Number(height)) / 72);
-        } else if (thkGroupTwo.includes(thickness.toString().trim())) {
-          const buyingPriceInBundle = Math.floor(
-            (buyingPrice * (72 / height)) / Math.floor(1344 / Number(height))
-          );
-          x = Math.floor((buyingPriceInBundle * soldQty * Number(height)) / 72);
-        } else if (thkGroupThree.includes(thickness.toString().trim())) {
-          const buyingPriceInBundle = Math.floor(
-            (buyingPrice * (72 / height)) / Math.floor(1053 / Number(height))
-          );
-          x = Math.floor((buyingPriceInBundle * soldQty * Number(height)) / 72);
-        }
       } else {
         return NextResponse.json(
           { error: "Equation is being developed" },
@@ -151,7 +135,7 @@ export async function POST(request) {
         product: foundProduct._id,
         soldQty,
         itemTotal,
-        soldPrice:price,
+        soldPrice: price,
         profit: itemTotal - x,
       });
     }
@@ -193,7 +177,7 @@ export async function POST(request) {
         );
       }
 
-      const updatedStock=await Stock.findOneAndUpdate(
+      const updatedStock = await Stock.findOneAndUpdate(
         { product: item.product },
         { $inc: { availableQty: -item.soldQty } },
         { new: true }
@@ -206,7 +190,6 @@ export async function POST(request) {
         transactionType: "Sell",
       });
     }
-
 
     return NextResponse.json({ invoice: savedInvoice });
   } catch (error) {

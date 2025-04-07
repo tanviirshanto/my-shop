@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 
 const InvoiceListPage = () => {
   const [invoices, setInvoices] = useState([]);
@@ -106,4 +107,4 @@ const InvoiceListPage = () => {
   );
 };
 
-export default InvoiceListPage;
+export default dynamic(() => Promise.resolve(InvoiceListPage), { ssr: false });

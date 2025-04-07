@@ -70,6 +70,7 @@ export async function POST(request) {
     });
 
     if (existingProduct) {
+      
       return NextResponse.json(
         { error: `Product with thickness ${thickness}, color ${color}, and company ${company} already exists.` },
         { status: 400 }
