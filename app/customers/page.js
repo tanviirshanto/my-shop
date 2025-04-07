@@ -34,20 +34,30 @@ export default function Customers() {
     try {
       if (editingCustomerId) {
         await axios.put(`/api/customers/${editingCustomerId}`, form);
+        setMessage("Customer updated successfully!");
+        toast.success("Customer updated successfully!");
       } else {
         await axios.post("/api/customers", form);
+        setMessage("Customer created successfully!");
+        toast.success("Customer created successfully!");
       }
+      
+      // Reset the form only after the operation is successful
       setForm({ name: "", phone: "", address: "" });
       setEditingCustomerId(null);
-      fetchCustomers();
-      setMessage("Operation successful!");
-      toast.success("Edited customer successful!");
+      fetchCustomers(); // Reload customers list
     } catch (error) {
       console.error("Error saving customer", error);
-      setMessage("Error saving customer");
+      if (error.response) {
+        // Handle known errors like validation or server issues
+        setMessage(`Error: ${error.response.data.message || 'Something went wrong'}`);
+      } else {
+        setMessage("Error saving customer");
+      }
       toast.error("Error saving customer");
     }
   };
+  
 
   const handleEditClick = (customer) => {
     setForm(customer);

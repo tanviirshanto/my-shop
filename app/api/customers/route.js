@@ -24,7 +24,12 @@ export async function GET() {
 // POST: Create a new customer
 export async function POST(request) {
   try {
+    // Ensure database connection
+    await connectDB();
+
     const { name, phone, address } = await request.json();
+
+    console.log(name, phone, address, "name, phone, address");
 
     const newCustomer = new Customer({
       name,
@@ -32,6 +37,9 @@ export async function POST(request) {
       address,
     });
 
+    console.log(newCustomer, "newCustomer");
+
+    // Try saving the new customer to the database
     await newCustomer.save();
 
     return new Response(JSON.stringify(newCustomer), {
@@ -39,12 +47,21 @@ export async function POST(request) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Failed to create customer" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Log full error stack for debugging
+    console.error('Error creating customer:', error.message);
+    console.error(error.stack);
+
+    // Return a more detailed error response
+    return new Response(
+      JSON.stringify({ error: "Failed to create customer", details: error.message }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
+
 
 // PUT: Update a customer by ID
 export async function PUT(request) {
