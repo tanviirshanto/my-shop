@@ -131,7 +131,7 @@ export default function Products() {
               <option value="">Select Thickness</option>
               {config.thicknesses.map((value) => (
                 <option key={value} value={value}>
-                  {value} mm
+                  {value}
                 </option>
               ))}
             </select>
@@ -194,7 +194,7 @@ export default function Products() {
             <tbody>
               {bulk.map((variation) => (
                 <tr key={`${variation.thickness}-${variation.color}`}>
-                  <td>{variation.thickness} mm</td>
+                  <td>{variation.thickness} </td>
                   <td>{variation.color}</td>
                   <td>{variation.price}</td>
                   <td>

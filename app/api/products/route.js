@@ -54,10 +54,12 @@ export async function POST(request) {
     const savedProduct = await newProduct.save();
 
     // Create a corresponding stock item
-    await Stock.create({
+    const newStock = new Stock({
       product: savedProduct._id, // Use the _id from the saved product
       availableQty: 0,
     });
+
+    const savedStock = await newStock.save();
 
     return new Response(JSON.stringify(savedProduct), {
       status: 201,

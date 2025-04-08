@@ -128,7 +128,7 @@ export default function StockManagement() {
                 <option value="">Select Product</option>
                 {products.map((product) => (
                   <option key={product._id} value={product._id}>
-                    {product.height} - {product.color} - {product.thickness}mm
+                    {product.height} - {product.thickness} - {product.color}
                   </option>
                 ))}
               </select>
@@ -167,7 +167,7 @@ export default function StockManagement() {
                   stocks.map((stock) => (
                     <tr key={stock._id}>
                       <td>
-                        {stock.product?.height} - {stock.product?.color} - {stock.product?.thickness}mm
+                        {stock.product?.height} - {stock.product?.thickness} - {stock.product?.color}
                       </td>
                       <td>{stock.availableQty}</td>
                       <td>

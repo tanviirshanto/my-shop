@@ -1,8 +1,8 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
-import dynamic from 'next/dynamic';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 
 const InvoiceListPage = () => {
   const [invoices, setInvoices] = useState([]);
@@ -10,9 +10,12 @@ const InvoiceListPage = () => {
   const itemsPerPage = 10;
   const [totalPages, setTotalPages] = useState(1);
   const searchParams = useSearchParams();
-  const customerId = searchParams.get('customerId');
+  const customerId = searchParams.get("customerId");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+
     const fetchInvoices = async () => {
       let url = `/api/invoice/get?page=${currentPage}&limit=${itemsPerPage}`;
       if (customerId) {
@@ -24,11 +27,16 @@ const InvoiceListPage = () => {
           const data = await response.json();
           setInvoices(data.invoices);
           setTotalPages(data.totalPages);
+          setLoading(false);
         } else {
-          console.error('Failed to fetch invoices:', response.statusText);
+          console.error("Failed to fetch invoices:", response.statusText);
+      setLoading(false);
+
         }
       } catch (error) {
-        console.error('Error fetching invoices:', error);
+        console.error("Error fetching invoices:", error);
+      setLoading(false);
+
       }
     };
 
@@ -38,6 +46,14 @@ const InvoiceListPage = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <progress className="progress w-56"></progress>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">
@@ -64,7 +80,10 @@ const InvoiceListPage = () => {
                   <td>{invoice.totalAmount}</td>
                   <td>{invoice.payment}</td>
                   <td>
-                    <Link href={`/invoice/${invoice._id}`} className="btn btn-sm btn-primary">
+                    <Link
+                      href={`/invoice/${invoice._id}`}
+                      className="btn btn-sm btn-primary"
+                    >
                       View
                     </Link>
                   </td>
@@ -84,7 +103,9 @@ const InvoiceListPage = () => {
               {Array.from({ length: totalPages }, (_, i) => (
                 <button
                   key={i}
-                  className={`join-item btn ${currentPage === i + 1 ? 'btn-active' : ''}`}
+                  className={`join-item btn ${
+                    currentPage === i + 1 ? "btn-active" : ""
+                  }`}
                   onClick={() => handlePageChange(i + 1)}
                 >
                   {i + 1}

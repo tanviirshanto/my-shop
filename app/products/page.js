@@ -112,14 +112,14 @@ export default function Products() {
             <select className="select select-bordered" value={form.thickness} onChange={(e) => setForm({ ...form, thickness: e.target.value })} required>
               <option value="">Select Thickness</option>
               {config.thicknesses.map((value) => (
-                <option key={value} value={value}>{value} mm</option>
+                <option key={value} value={value}>{value} </option>
               ))}
             </select>
 
             <select className="select select-bordered" value={form.height} onChange={(e) => setForm({ ...form, height: e.target.value })} required>
               <option value="">Select Height</option>
               {config.heights.map((value) => (
-                <option key={value} value={value}>{value} feet</option>
+                <option key={value} value={value}>{value} </option>
               ))}
             </select>
 
@@ -160,8 +160,8 @@ export default function Products() {
             <tbody>
               {products.map((product) => (
                 <tr key={product._id}>
-                  <td>{product.thickness} mm</td>
-                  <td>{product.height} feet</td>
+                  <td>{product.thickness}</td>
+                  <td>{product.height}</td>
                   <td>{product.price}</td>
                   <td>{product.color}</td>
                   <td>{product.company}</td>

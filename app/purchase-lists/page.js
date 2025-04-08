@@ -11,8 +11,12 @@ const PurchaseListPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const searchParams = useSearchParams();
   const company = searchParams.get("company");
+    const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
+    setLoading(true);
+
     const fetchPurchases = async () => {
       let url = `/api/purchase/get?page=${currentPage}&limit=${itemsPerPage}`;
       if (company) {
@@ -24,11 +28,17 @@ const PurchaseListPage = () => {
           const data = await response.json();
           setPurchases(data.purchases);
           setTotalPages(data.totalPages);
+      setLoading(false);
+
         } else {
           console.error("Failed to fetch purchases:", response.statusText);
+      setLoading(false);
+
         }
       } catch (error) {
         console.error("Error fetching purchases:", error);
+      setLoading(false);
+
       }
     };
 
@@ -38,6 +48,14 @@ const PurchaseListPage = () => {
   const handlePageChange = (page ) => {
     setCurrentPage(page);
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <progress className="progress w-56"></progress>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">

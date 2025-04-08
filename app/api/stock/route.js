@@ -14,15 +14,34 @@ export async function GET(request) {
     const skip = (page - 1) * limit;
 
     const stocks = await Stock.find({})
-      .sort({ thickness: 1 })
-      .populate("product")
-      .skip(skip)
-      .limit(limit);
+  .populate("product")
+  .skip(skip)
+  .limit(limit)
+  .lean(); // Use lean() to return plain JavaScript objects
+
+// Convert thickness and height to numbers and then sort
+const sortedStocks = stocks.sort((a, b) => {
+  // Convert thickness and height to numbers and sort them
+  const thicknessA = parseFloat(a.product.thickness);
+  const thicknessB = parseFloat(b.product.thickness);
+
+  if (thicknessA !== thicknessB) {
+    return thicknessA - thicknessB; // Sort by thickness first
+  }
+
+  // If thickness is the same, then sort by height
+  const heightA = parseFloat(a.product.height);
+  const heightB = parseFloat(b.product.height);
+
+  return heightA - heightB; // Sort by height
+});
+
+console.log("Sorted stocks", sortedStocks);
 
     const totalStocks = await Stock.countDocuments({});
 
     return NextResponse.json(
-      { success: true, data: stocks, total: totalStocks, page, limit },
+      { success: true, data: sortedStocks, total: totalStocks, page, limit },
       { status: 200 }
     );
   } catch (error) {

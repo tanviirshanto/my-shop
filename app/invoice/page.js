@@ -36,7 +36,8 @@ const InvoicePage = () => {
     colors: [],
   });
   const [customers, setCustomers] = useState([]);
-  const [itemPrices, setItemPrices] = useState([]); // State for item prices
+  const [itemPrices, setItemPrices] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -134,21 +135,27 @@ const InvoicePage = () => {
   };
 
   const handleSubmit = async (e) => {
+    setLoading(true); // Starts loading
     e.preventDefault();
+
     if (invoiceData.invoiceItems.length === 0) {
       toast.error("Please add at least one item to the invoice.");
+      setLoading(false); // Stop loading if validation fails
       return;
     }
 
     if (invoiceData.totalAmount < 0) {
       toast.error("Total amount cannot be negative.");
+      setLoading(false); // Stop loading if validation fails
       return;
     }
 
     if (invoiceData.amountPaid < 0) {
       toast.error("Amount paid cannot be negative.");
+      setLoading(false); // Stop loading if validation fails
       return;
     }
+
     try {
       const response = await fetch("/api/invoice/add", {
         method: "POST",
@@ -159,7 +166,9 @@ const InvoicePage = () => {
       toast.success("Invoice submitted successfully");
     } catch (error) {
       console.error("Error submitting invoice:", error);
-      toast.error("Error submitting invoice");
+      toast.error(error.message);
+    } finally {
+      setLoading(false); // Stop loading after the API call finishes
     }
   };
 
@@ -378,9 +387,10 @@ const InvoicePage = () => {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={invoiceData.invoiceItems.length === 0}
+              disabled={invoiceData.invoiceItems.length === 0 || loading}
             >
-              Generate Invoice
+              {loading ? "Generating Invoice..." : "Generate Invoice"}
+              
             </button>
           </form>
         </div>
