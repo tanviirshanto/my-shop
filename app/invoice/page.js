@@ -16,7 +16,7 @@ const quantityItems = [
 
 const InvoicePage = () => {
   const [singleItem, setSingleItem] = useState({
-    product: { thickness: "", height: "", color: "", price: 0 },
+    product: { thickness: "", height: "", color: "All", price: 0 },
     soldQty: 0,
     itemTotal: 0,
   });

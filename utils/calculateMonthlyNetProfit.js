@@ -21,7 +21,7 @@ export async function calculateMonthlyNetProfit(year, month) {
         $group: {
           _id: null,
           totalNetProfit: { $sum: "$netProfit" },
-          sumTotalAmount: { $sum: "$totalAmount" }, // Added totalAmount sum
+          sumTotalAmount: { $sum: "$amountPaid" }, // Added totalAmount sum
         },
       },
       {
