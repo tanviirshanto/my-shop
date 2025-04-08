@@ -32,7 +32,7 @@ export default function MyComponent() {
           >
             Reset StockBook
           </button>
-          <button className="btn  btn-error" onClick={handleReset} name="sells">
+          <button className="btn  btn-error" onClick={handleReset} name="sell">
             Reset Sells
           </button>
           <button className="btn  btn-info  " onClick={handleStockQuantity} >
