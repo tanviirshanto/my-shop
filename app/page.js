@@ -1,5 +1,5 @@
 import Image from "next/image";
-import HomeItemCard from "./components/HomeItemCard";
+// import HomeItemCard from "./components/HomeItemCard";
 import HomeSingleCard from "./components/HomeSingleCard";
 import HomeStatCard from "./components/HomeStatCard";
 import { getCurrentMonthAndYear } from "@/utils/functions";
@@ -24,21 +24,21 @@ export default function Home() {
 
         <HomeSingleCard
           name="Invoice"
-          btnName="Create invoice"
-          btnUrl="/invoice"
+          firstBtn="invoice"
+          secondBtn="invoice-lists"
         />
         <HomeSingleCard
           name="Purchase"
-          btnName="Add purchase"
-          btnUrl="/purchase"
+          firstBtn="purchase"
+          secondBtn="purchase-lists"
         />
         <HomeSingleCard
-          name="Stock Book"
-          btnName="Check stocks"
-          btnUrl="/stockBook"
+          name="Stock"
+          firstBtn="stockBook"
+          secondBtn="stocks/table"
         />
       </div>
-      <HomeItemCard />
+      
     </div>
   );
 }

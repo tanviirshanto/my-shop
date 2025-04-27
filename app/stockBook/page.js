@@ -87,7 +87,7 @@ function StockBook() {
               <td>{variation.color}</td>
               <td>{variation.price}</td>
               <td>
-               {heights.map((value) => <Link href={`/stockBook/${variation.thickness}/${value}/${variation.color}`} key={value} className="mr-3 hover:underline" >{value}</Link>)}
+               {heights.map((value) => <Link href={`/stockBook/${variation.thickness}/${value}/${variation.color}`} key={value} className="mr-3 link link-hover" >{value}</Link>)}
               </td>
             </tr>
           ))}

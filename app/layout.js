@@ -44,11 +44,11 @@ export default function RootLayout({ children }) {
           <Link href="/customers" className="flex gap-1 items-center no-underline hover:underline transition duration-300 text-blue-400 hover:text-blue-700"> <MdPeople/> Customers </Link> </div> */}
         {children}
         </SessionWrapper>
-        <footer className="footer footer-center p-4 bg-base-200 text-base-content">
+        {/* <footer className="footer footer-center p-4 bg-base-200 text-base-content">
           <div>
             <p>Copyright © 2025 - All right reserved by Tanvir Hossen Shanto</p>
           </div>
-        </footer>
+        </footer> */}
       </body>
     </html>
   );

@@ -6,8 +6,17 @@ import React, { useState, useEffect, useRef } from "react";
 const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
   const invoiceRef = useRef();
 
-  const invoiceData = JSON.parse(parsedInvoiceData);
+  const [invoiceData, setInvoiceData] = useState(JSON.parse(parsedInvoiceData));
   console.log("Invoice Data:", invoiceData); // Debugging
+
+    // Handle date change
+    const handleDateChange = (e) => {
+      setInvoiceData((prev) => ({
+        ...prev,
+        date: e.target.value,
+      }));
+    };
+  
 
   const generatePDF = async () => {
     if (!invoiceData) return;
@@ -41,6 +50,23 @@ const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
     return <p>Loading...</p>;
   }
 
+  const handleSubmit = async () => {
+    // Make sure to send the updated invoice data to the backend for saving
+    const response = await fetch(`/api/invoice/${invoiceData._id}`, {
+      method: 'PUT', // PUT method for updating the invoice
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(invoiceData),
+    });
+
+    if (response.ok) {
+      alert("Invoice updated successfully");
+    } else {
+      alert("Failed to update invoice");
+    }
+  };
+
   return (
     <div className="p-4 flex flex-col items-center">
       <div className="lg:w-[70%] p-4" ref={invoiceRef} style={{ marginTop: "5%", marginLeft: "5%" }}>
@@ -50,7 +76,12 @@ const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
 
         <div>
           <div className="mb-4 text-left  flex flex-col gap-2">
-            <p>Date: {formatDate(invoiceData.date)}</p>
+          <input
+              type="date"
+              value={invoiceData.date.substring(0, 10)} // Ensure date format is YYYY-MM-DD
+              onChange={handleDateChange}
+              className="input input-bordered"
+            />
             <p>Customer: {invoiceData.customer.name}</p>
             <p>Payment Status: {invoiceData.payment}</p>
           </div>
@@ -131,6 +162,9 @@ const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
       <button onClick={generatePDF} className="btn btn-primary w-56">
         Print PDF
       </button>
+      <button onClick={handleSubmit} className="btn btn-success w-56 mt-2">
+            Save Changes
+          </button>
     </div>
   );
 };

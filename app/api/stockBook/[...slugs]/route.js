@@ -1,26 +1,27 @@
 // app/api/items/[...slugs]/route.js
 
-import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
-import Product from '@/models/product';
-import StockBook from '@/models/stockBook';
-import { connectDB } from '@/lib/db';
-import { Stock } from '@/models';
+import { NextResponse } from "next/server";
+import mongoose from "mongoose";
+import Product from "@/models/product";
+import StockBook from "@/models/stockBook";
+import { connectDB } from "@/lib/db";
+import { Stock } from "@/models";
 
-export async function GET(request, { params }) { // Remove paramsPromise and use directly params
+export async function GET(request, { params }) {
+  // Remove paramsPromise and use directly params
   try {
     await connectDB();
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page')) || 1;
-    const limit = parseInt(searchParams.get('limit')) || 10;
+    const page = parseInt(searchParams.get("page")) || 1;
+    const limit = parseInt(searchParams.get("limit")) || 10;
     const skip = (page - 1) * limit;
 
     const slugs = params.slugs || []; // Use params directly
 
     if (slugs.length !== 3) {
       return NextResponse.json(
-        { message: 'Please provide thickness, height, and color as slugs.' },
+        { message: "Please provide thickness, height, and color as slugs." },
         { status: 400 }
       );
     }
@@ -34,14 +35,18 @@ export async function GET(request, { params }) { // Remove paramsPromise and use
     });
 
     if (!product) {
-      return NextResponse.json({ message: 'Product is not created yet.' }, { status: 200 });
+      return NextResponse.json(
+        { message: "Product is not created yet." },
+        { status: 200 }
+      );
     }
 
     const totalItems = await StockBook.countDocuments({ product: product._id });
     const totalPages = Math.ceil(totalItems / limit);
 
     const items = await StockBook.find({ product: product._id })
-      .populate('product')
+      .sort({ date: -1 })
+      .populate("product")
       .skip(skip)
       .limit(limit);
 
@@ -55,12 +60,21 @@ export async function GET(request, { params }) { // Remove paramsPromise and use
     console.log(availableQty);
 
     if (items.length === 0) {
-      return NextResponse.json({ availableQty, message: 'No records in Stock Book' }, { status: 200 });
+      return NextResponse.json(
+        { availableQty, message: "No records in Stock Book" },
+        { status: 200 }
+      );
     }
 
-    return NextResponse.json({ items, availableQty, totalPages, currentPage: page }, { status: 200 });
+    return NextResponse.json(
+      { items, availableQty, totalPages, currentPage: page },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error('Error fetching items:', error);
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    console.error("Error fetching items:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
   }
 }

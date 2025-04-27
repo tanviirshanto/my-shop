@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { use } from 'react';
-import { formatDate } from '@/utils/fetchData';
+import { formatDate } from "@/lib/functions";
 
 export default function StockBooksPage({ params: paramsPromise }) {
   const router = useRouter();

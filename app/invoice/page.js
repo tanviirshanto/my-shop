@@ -11,7 +11,8 @@ import QuickButtons from "../components/quickButtons";
 import QuickPriceButton from "../components/quickPriceButton";
 
 const quantityItems = [
-  20, 21, 25, 27, 30, 35, 36, 40, 45, 50, 60, 80, 70, 90, 100, 120, 282,
+  6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 21, 24, 25, 27, 28, 30, 32, 35, 36, 40,
+  42, 45, 49, 50, 60, 80, 70, 90, 100, 120, 282,
 ];
 
 const InvoicePage = () => {
@@ -22,11 +23,12 @@ const InvoicePage = () => {
   });
   const [invoiceData, setInvoiceData] = useState({
     invoiceItems: [],
-    customerId: "67d86a5544af1a4fa27de79a",
+    customerId: "",
     payment: "",
     totalAmount: 0,
     amountPaid: 0,
-    date: new Date().toISOString().split("T")[0],
+    // date: new Date().toISOString().split("T")[0],
+    date: "",
   });
 
   const [generatedInvoice, setGeneratedInvoice] = useState(null);
@@ -115,29 +117,48 @@ const InvoicePage = () => {
       toast.error("Please fill in all item details.");
       return;
     }
-
+  
     if (singleItem.soldQty <= 0) {
       toast.error("Quantity must be greater than zero.");
       return;
     }
-
+  
     if (singleItem.product.price < 0) {
       toast.error("Price cannot be negative.");
       return;
     }
+  
     setInvoiceData((prev) => ({
       ...prev,
       invoiceItems: [...prev.invoiceItems, singleItem],
     }));
-
-    setItemPrices((prevPrices) => [...prevPrices, singleItem.product.price]); // Store the price
+  
+    setItemPrices((prevPrices) => {
+      if (!prevPrices.includes(singleItem.product.price)) {
+        return [...prevPrices, singleItem.product.price];
+      }
+      return prevPrices;
+    });
+  
+    // ✅ Reset the singleItem form
+    setSingleItem((prevSingleItem) => ({
+      ...prevSingleItem,
+      product: {
+        ...prevSingleItem.product,
+        price: 0,
+      },
+      soldQty: 0,
+      itemTotal: 0,
+    }));
     toast.success("Item added to invoice");
   };
+  
 
   const handleSubmit = async (e) => {
     setLoading(true); // Starts loading
     e.preventDefault();
 
+    // Validation checks
     if (invoiceData.invoiceItems.length === 0) {
       toast.error("Please add at least one item to the invoice.");
       setLoading(false); // Stop loading if validation fails
@@ -156,6 +177,18 @@ const InvoicePage = () => {
       return;
     }
 
+    if (!invoiceData.date) {
+      toast.error("Please select a date.");
+      setLoading(false);
+      return;
+    }
+
+    if (!invoiceData.customerId) {
+      toast.error("Please select a customer.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/invoice/add", {
         method: "POST",
@@ -164,12 +197,45 @@ const InvoicePage = () => {
       });
       const data = await response.json();
       toast.success("Invoice submitted successfully");
+
+      // Clear the invoice data after successful submission
+      setInvoiceData((prev) => ({
+        invoiceItems: [],
+        customerId: "",
+        payment: "",
+        totalAmount: 0,
+        amountPaid: 0,
+        date: prev.date, // ✅ Keep the current date
+      }));
+      setSingleItem({
+        product: { thickness: "", height: "", color: "All", price: 0 },
+        soldQty: 0,
+        itemTotal: 0,
+      });
+      setItemPrices([]); // Clear item prices as well
     } catch (error) {
       console.error("Error submitting invoice:", error);
       toast.error(error.message);
     } finally {
       setLoading(false); // Stop loading after the API call finishes
     }
+  };
+
+  const handleEditItem = (index) => {
+    const itemToEdit = invoiceData.invoiceItems[index];
+
+    // Remove item from list
+    const updatedItems = invoiceData.invoiceItems.filter((_, i) => i !== index);
+    const totalAmount = calculateTotalAmount(updatedItems);
+
+    setInvoiceData((prev) => ({
+      ...prev,
+      invoiceItems: updatedItems,
+      totalAmount,
+    }));
+
+    setSingleItem(itemToEdit); // Load into form
+    toast("Item loaded for editing");
   };
 
   return (
@@ -390,16 +456,16 @@ const InvoicePage = () => {
               disabled={invoiceData.invoiceItems.length === 0 || loading}
             >
               {loading ? "Generating Invoice..." : "Generate Invoice"}
-              
             </button>
           </form>
         </div>
         <InvoicePreview
           invoiceData={invoiceData}
           setInvoiceData={setInvoiceData}
+          onEdit={handleEditItem}
           customerName={
             customers.find((c) => c._id === invoiceData.customerId)?.name ||
-            "General"
+            ""
           }
         />
       </div>{" "}

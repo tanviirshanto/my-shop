@@ -3,11 +3,24 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { formatDate } from "@/lib/functions";
+
+// Helper: group invoices by date (YYYY-MM-DD)
+function groupInvoicesByDate(invoices) {
+  return invoices.reduce((grouped, invoice) => {
+    const dateKey = new Date(invoice.date).toISOString().split("T")[0];
+    if (!grouped[dateKey]) {
+      grouped[dateKey] = [];
+    }
+    grouped[dateKey].push(invoice);
+    return grouped;
+  }, {});
+}
 
 const InvoiceListPage = () => {
   const [invoices, setInvoices] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
   const [totalPages, setTotalPages] = useState(1);
   const searchParams = useSearchParams();
   const customerId = searchParams.get("customerId");
@@ -27,16 +40,13 @@ const InvoiceListPage = () => {
           const data = await response.json();
           setInvoices(data.invoices);
           setTotalPages(data.totalPages);
-          setLoading(false);
         } else {
           console.error("Failed to fetch invoices:", response.statusText);
-      setLoading(false);
-
         }
       } catch (error) {
         console.error("Error fetching invoices:", error);
-      setLoading(false);
-
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -47,6 +57,26 @@ const InvoiceListPage = () => {
     setCurrentPage(page);
   };
 
+  const handleDelete = async (invoiceId) => {
+    const confirmation = window.confirm("Are you sure you want to delete this invoice?");
+    if (confirmation) {
+      try {
+        const response = await fetch(`/api/invoice/${invoiceId}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          setInvoices(invoices.filter((invoice) => invoice._id !== invoiceId));
+          alert("Invoice deleted successfully");
+        } else {
+          console.error("Failed to delete invoice:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error deleting invoice:", error);
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -54,6 +84,9 @@ const InvoiceListPage = () => {
       </div>
     );
   }
+
+  const groupedInvoices = groupInvoicesByDate(invoices);
+  const sortedDates = Object.keys(groupedInvoices).sort((a, b) => new Date(b) - new Date(a)); // Latest date first
 
   return (
     <div className="p-4">
@@ -72,25 +105,39 @@ const InvoiceListPage = () => {
               </tr>
             </thead>
             <tbody>
-              {invoices.map((invoice) => (
-                <tr key={invoice._id}>
-                  <td>{invoice._id}</td>
-                  <td>{invoice.customer.name}</td>
-                  <td>{new Date(invoice.date).toLocaleDateString()}</td>
-                  <td>{invoice.totalAmount}</td>
-                  <td>{invoice.payment}</td>
-                  <td>
-                    <Link
-                      href={`/invoice/${invoice._id}`}
-                      className="btn btn-sm btn-primary"
-                    >
-                      View
-                    </Link>
-                  </td>
-                </tr>
+              {sortedDates.map((date) => (
+                <React.Fragment key={date}>
+                  <tr className="bg-gray-100 text-slate-700">
+                    <td colSpan="6" className="font-bold py-2">
+                      {formatDate(new Date(date))}
+                    </td>
+                  </tr>
+                  {groupedInvoices[date].map((invoice) => (
+                    <tr key={invoice._id}>
+                      <td>{invoice._id}</td>
+                      <td>{invoice.customer?.name}</td>
+                      <td>{formatDate(invoice.date)}</td>
+                      <td>{invoice.totalAmount}</td>
+                      <td>{invoice.payment}</td>
+                      <td className="flex">
+                        <Link href={`/invoice/${invoice._id}`} className="btn btn-sm btn-primary">
+                          View
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(invoice._id)}
+                          className="btn btn-sm btn-danger ml-2"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
+
+          {/* Pagination */}
           <div className="flex justify-center mt-4">
             <div className="join">
               <button
@@ -103,9 +150,7 @@ const InvoiceListPage = () => {
               {Array.from({ length: totalPages }, (_, i) => (
                 <button
                   key={i}
-                  className={`join-item btn ${
-                    currentPage === i + 1 ? "btn-active" : ""
-                  }`}
+                  className={`join-item btn ${currentPage === i + 1 ? "btn-active" : ""}`}
                   onClick={() => handlePageChange(i + 1)}
                 >
                   {i + 1}

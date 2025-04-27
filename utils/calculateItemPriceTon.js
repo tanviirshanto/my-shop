@@ -6,10 +6,10 @@ const calculateItemPriceTon = (height, thickness, boughtQty, price) => {
   const isTonPricing = price > 20000;
   const isTunnel = thickness.includes(thkTunnel); 
 
-  if (isTunnel) {
-    console.log("Tunnel");
-    return Math.floor(price * boughtQty);
-  }
+  // if (isTunnel) {
+  //   console.log("Tunnel");
+  //   return Math.floor(price * boughtQty);
+  // }
 
 
   if (isTonPricing) {
@@ -26,8 +26,11 @@ const calculateItemPriceTon = (height, thickness, boughtQty, price) => {
       console.log("Heavy weight");
       return Math.floor((price * boughtQty) / Math.floor(1053 / heightNum));
     }
-    console.error("Program Error: Unknown thickness group.");
-    return 0;
+    // console.error("Program Error: Unknown thickness group.");
+    // return 0;
+  }
+  else{
+    return Math.floor(price * boughtQty);
   }
 
   return 0;

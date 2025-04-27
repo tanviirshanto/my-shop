@@ -19,12 +19,12 @@ const QuickButtons = ({ setSingleItem, quantityItems, itemPrices }) => {
   return (
     <div className=" flex flex-col gap-5">
       <div className="flex flex-wrap gap-2">
-        <div className="btn btn-sm btn-outline " key="Quantities">
+        <div className="btn btn-sm btn-outline btn-warning " key="Quantities">
           Quantities
         </div>
         {quantityItems.map((quantityItem) => (
           <button
-            className="btn btn-sm btn-outline btn-warning"
+            className="btn btn-sm btn-outline "
             value={quantityItem}
             onClick={(e) => updateQuantiy(e)}
             key={quantityItem}
@@ -34,12 +34,12 @@ const QuickButtons = ({ setSingleItem, quantityItems, itemPrices }) => {
         ))}
       </div>
       <div className="flex flex-wrap my-2 gap-2">
-        <button className="btn btn-sm btn-outline " key="Prices">
+        <button className="btn btn-sm btn-outline btn-info " key="Prices">
           Prices
         </button>
         {itemPrices.map((itemPrice) => (
           <button
-            className="btn btn-sm btn-info"
+            className="btn btn-sm  btn-outline"
             value={itemPrice}
             onClick={(e) => updatePrice(e)}
             key={itemPrice}

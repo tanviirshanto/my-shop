@@ -1,0 +1,4 @@
+1. price shouldn't be key in invoice.
+2. date should be cleared on submit.
+3. examine sold quantity place again.
+4. delete invoice will also delete sells and stockbook entry.Then it will also add the subtracted amount to stock available quantity.

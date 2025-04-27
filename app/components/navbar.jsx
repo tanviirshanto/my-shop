@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";  // Import usePathname
+import { usePathname } from "next/navigation"; // Import usePathname
 import { BiSolidPurchaseTag } from "react-icons/bi";
 import { FaFileInvoiceDollar } from "react-icons/fa";
 import { MdInventory2 } from "react-icons/md";
@@ -12,8 +12,8 @@ import { useSession, signOut } from "next-auth/react";
 const Navbar = () => {
   const { data: session } = useSession();
   const [openDropdown, setOpenDropdown] = useState(null);
-  const pathname = usePathname();  
-  console.log(pathname); 
+  const pathname = usePathname();
+  console.log(pathname);
   // Function to handle dropdown toggle
   const handleDropdownClick = (dropdownKey) => {
     setOpenDropdown((prev) => (prev === dropdownKey ? null : dropdownKey));
@@ -41,7 +41,7 @@ const Navbar = () => {
 
   // If it's an authentication page, don't render the Navbar
   if (isAuthPage) {
-    return null; 
+    return null;
   }
 
   return (
@@ -56,6 +56,12 @@ const Navbar = () => {
       </div>
       <div className="flex-none z-50">
         <ul className="menu space-x-4 menu-horizontal px-1">
+          {session?.user?.role === "admin" ? (
+            <li key="admin" className="dropdown relative">
+              <Link href="/admin" className="flex gap-1 items-center btn btn-ghost">Admin Dashboard</Link>
+            </li>
+          ) : null}
+
           {[
             {
               key: "invoice",
@@ -109,13 +115,14 @@ const Navbar = () => {
         </ul>
       </div>
       <div className="mx-4">
-        {session && 
+        {session && (
           <button
             className="btn btn-primary no-underline transition duration-300"
             onClick={() => signOut()}
           >
             Sign Out
-          </button>}
+          </button>
+        )}
       </div>
     </div>
   );

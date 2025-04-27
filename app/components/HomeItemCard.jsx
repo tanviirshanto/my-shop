@@ -4,7 +4,7 @@ import React from 'react'
 
 const HomeItemCard = () => {
   return (
-    <div className="card border-2 border-gray-500 bg-base-100 w-full shadow-sm">
+    <div className="card  bg-base-100 w-full shadow-sm">
   {/* <figure>
     <img
       src="https://img.lovepik.com/bg/20240427/3D-Illustration-of-PVC-Coated-Metal-Roof-Sheets-and-Corrugated_8222745_wh1200.jpg"
@@ -13,11 +13,11 @@ const HomeItemCard = () => {
       />
   </figure> */}
   <div className="card-body flex flex-col justify-center items-center">
-    <h2 className="card-title mb-2">
+    <h2 className="card-title mb-2 text-black bg-slate-100 px-5 py-2 rounded-xl">
       Admin
     </h2>
     <div className="card-actions">
-    <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box">
+    <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box text-lg">
   <li><Link href="/products">Products</Link></li>
   <li><Link href="/stocks">Stocks</Link></li>
   <li><Link href="/sells">Sells</Link></li>

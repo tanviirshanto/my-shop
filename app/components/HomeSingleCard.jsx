@@ -1,7 +1,17 @@
 import Link from "next/link";
 import React from "react";
 
-const HomeSingleCard = ({ name, btnName, btnUrl }) => {
+function formatBtnName(path) {
+  return path
+    .split("/" || "-")                       // Split by '/'
+    .map(word =>
+      word.charAt(0).toUpperCase() +  // Capitalize first letter
+      word.slice(1).toLowerCase()     // Lowercase the rest
+    )
+    .join(" ");                       // Join back with space
+}
+
+const HomeSingleCard = ({ name,firstBtn, secondBtn }) => {
   return (
     <div className="card bg-base-100 image-full w-96 shadow-sm">
       <figure className="brightness-50">
@@ -16,11 +26,11 @@ const HomeSingleCard = ({ name, btnName, btnUrl }) => {
         An invoice records the products delivered , the total amount due, and the preferred payment method.
         </p>
         <div className="card-actions justify-end">
-          {name==="Stock Books"?"":<Link href={`${btnUrl}-lists`} className="btn btn-info">
-            See {name}s
-          </Link>}
-          <Link href={btnUrl} className="btn btn-primary">
-            {btnName}
+         <Link href={`/${firstBtn}`} className="btn btn-info">
+            {formatBtnName(firstBtn)}
+          </Link>
+          <Link href={`/${secondBtn}`} className="btn btn-primary">
+            {formatBtnName(secondBtn)}
           </Link>
         </div>
       </div>

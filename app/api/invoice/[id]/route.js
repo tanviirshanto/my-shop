@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import Invoice from '@/models/invoice';
 import { connectDB } from '@/lib/db';
+import { Sell, Stock, StockBook } from '@/models';
 
 await connectDB();
 
@@ -24,45 +25,90 @@ export async function GET(request, { params }) {
   }
 }
 
-//If you need to add PUT and DELETE routes.
-export async function PUT(request, { params }) {
+export async function PUT(req, { params }) {
     const { id } = params;
-
+    const { date, customerId, payment, totalAmount, amountPaid, invoiceItems } = await req.json();
+  
     try {
-        
+      // Update the invoice date and other details
+      const updatedInvoice = await Invoice.findByIdAndUpdate(
+        id,
+        { date, customer: customerId, payment, totalAmount, amountPaid, invoiceItems },
+        { new: true }
+      ).populate('customer invoiceItems.product');
+  
+      if (!updatedInvoice) {
+        return new Response('Invoice not found', { status: 404 });
+      }
+  
+      // Update the associated sells records with the new invoice date
+      await Sell.updateMany(
+        { invoice: id }, // Find all sells associated with this invoice
+        { date } // Update the date of these sells to match the updated invoice date
+      );
 
-        const body = await request.json();
-        const updatedInvoice = await Invoice.findByIdAndUpdate(id, body, {
-            new: true,
-            runValidators: true,
-        }).populate('customer invoiceItems.product');
-
-        if (!updatedInvoice) {
-            return NextResponse.json({ message: 'Invoice not found' }, { status: 404 });
-        }
-
-        return NextResponse.json(updatedInvoice, { status: 200 });
+      await StockBook.updateMany(
+        { invoice: id }, // Find all sells associated with this invoice
+        { date } // Update the date of these sells to match the updated invoice date
+      );
+  
+      return new Response(JSON.stringify(updatedInvoice), { status: 200 });
     } catch (error) {
-        console.error('Error updating invoice:', error);
-        return NextResponse.json({ message: 'Failed to update invoice' }, { status: 500 });
-    }
-}
+      console.error(error);
+      return new Response('Error updating invoice', { status: 500 });
+    }}
+  
 
-export async function DELETE(request, { params }) {
-    const { id } = params;
-
-    try {
-       
-
-        const deletedInvoice = await Invoice.findByIdAndDelete(id);
-
-        if (!deletedInvoice) {
-            return NextResponse.json({ message: 'Invoice not found' }, { status: 404 });
+    export async function DELETE(req, { params }) {
+      const { id } = params;
+    
+      try {
+        // Fetch the invoice first to access its items
+        const invoice = await Invoice.findById(id).populate("invoiceItems.product");
+    
+        if (!invoice) {
+          return new Response("Invoice not found", { status: 404 });
         }
-
-        return NextResponse.json({ message: 'Invoice deleted successfully' }, { status: 200 });
-    } catch (error) {
-        console.error('Error deleting invoice:', error);
-        return NextResponse.json({ message: 'Failed to delete invoice' }, { status: 500 });
+    
+        // Loop through invoice items and revert stock quantities
+        for (const item of invoice.invoiceItems) {
+          const productId = item.product._id;
+          const soldQty = item.soldQty;
+    
+          const updatedStock = await Stock.findOneAndUpdate(
+            { product: productId },
+            { $inc: { availableQty: soldQty } },
+            { new: true }
+          );
+    
+          if (!updatedStock) {
+            console.warn(`Stock not found for product ${productId}, skipping...`);
+            continue; // Skip to next item
+          }
+    
+        }
+    
+        // Delete Sell records
+        await Sell.deleteMany({ invoice: id });
+    
+        // Delete StockBook entries related to original sell (not the rollback)
+        await StockBook.deleteMany({
+          invoice: id,
+          transactionType: "Sell" // Only delete original sell records
+        });
+    
+        // Delete invoice profit record (optional but recommended)
+        // await InvoiceProfit.deleteOne({ invoice: id });
+    
+        // Delete the invoice
+        await Invoice.findByIdAndDelete(id);
+    
+        return new Response("Invoice deleted and stock reset successfully", { status: 200 });
+    
+      } catch (error) {
+        console.error("Error deleting invoice and resetting stock:", error);
+        return new Response("Error deleting invoice", { status: 500 });
+      }
     }
-}
+    
+    

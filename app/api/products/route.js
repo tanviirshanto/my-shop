@@ -36,7 +36,12 @@ export async function POST(request) {
   try {
     const { thickness, height, price, color, company } = await request.json();
 
-    const existingProduct = await Product.findOne({thickness, height, color, company});
+    const existingProduct = await Product.findOne({
+      thickness,
+      height,
+      color,
+      company,
+    });
 
     if (existingProduct) {
       throw new Error("Product already exists");
@@ -66,6 +71,7 @@ export async function POST(request) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.error("Error creating product:", error);
     return new Response(JSON.stringify({ error: "Failed to create product" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -122,7 +128,9 @@ export async function DELETE(request) {
     await Stock.deleteOne({ product: deletedProduct._id });
 
     return new Response(
-      JSON.stringify({ message: "roduct and associated stock deleted successfully" }),
+      JSON.stringify({
+        message: "product and associated stock deleted successfully",
+      }),
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
