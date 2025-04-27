@@ -3,7 +3,7 @@ import { calculateMonthlyNetProfit } from '@/utils/calculateMonthlyNetProfit';
 import { calculateMonthlyPurchaseTotalAmount } from '@/utils/calculateMonthlyPurchaseTotalAmount';
 import React from 'react'
 
-connectDB()
+
 
 async function  HomeStatCard({year, month}) {
   

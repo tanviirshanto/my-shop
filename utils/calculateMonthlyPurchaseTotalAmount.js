@@ -1,10 +1,11 @@
 import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
 import Purchase from "@/models/purchase";
-connectDB();
+
 
 export async function calculateMonthlyPurchaseTotalAmount(year, month) {
   try {
+    await connectDB();
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
