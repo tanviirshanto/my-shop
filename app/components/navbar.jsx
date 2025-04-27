@@ -61,6 +61,9 @@ const Navbar = () => {
               <Link href="/admin" className="flex gap-1 items-center btn btn-ghost">Admin Dashboard</Link>
             </li>
           ) : null}
+          <li className="dropdown relative">
+          <Link href="/monthly-statistics" className="flex gap-1 items-center btn btn-ghost">Statistics</Link>
+          </li>
 
           {[
             {
