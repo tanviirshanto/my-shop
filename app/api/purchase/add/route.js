@@ -6,16 +6,19 @@ import StockBook from "@/models/stockBook";
 import { connectDB } from "@/lib/db";
 
 export async function POST(req) {
-  await connectDB();
-
   try {
+    await connectDB();
+
     const body = await req.json();
     console.log("Purchase Body:", body);
 
     const { purchaseItems, company, totalAmount } = body;
 
     if (!purchaseItems?.length || !company || totalAmount < 0) {
-      return NextResponse.json({ error: "Invalid input data" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid input data" },
+        { status: 400 }
+      );
     }
 
     let formattedPurchaseItems = [];
@@ -40,7 +43,9 @@ export async function POST(req) {
       console.log("Stock:", stock);
       if (!stock) {
         return NextResponse.json(
-          { error: `Stock not found for product: ${thickness}, ${height}, ${color}` },
+          {
+            error: `Stock not found for product: ${thickness}, ${height}, ${color}`,
+          },
           { status: 404 }
         );
       }
@@ -57,16 +62,16 @@ export async function POST(req) {
       console.log("Stock Update:", stockUpdate);
 
       // Add entry to StockBook
-      const stockBookCreate= await StockBook.create({
+      const stockBookCreate = await StockBook.create({
         product: foundProduct._id,
-        quantity:Number(boughtQty),
-        newQty:stockUpdate.availableQty,
+        quantity: Number(boughtQty),
+        newQty: stockUpdate.availableQty,
         transactionType: "Purchase",
       });
 
       console.log("Stock Create:", stockBookCreate);
 
-      const pushItems= formattedPurchaseItems.push({
+      const pushItems = formattedPurchaseItems.push({
         product: foundProduct._id, // Store ObjectId instead of object
         boughtQty,
         itemTotal, // Ensure itemTotal is included
@@ -89,6 +94,9 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error("Error adding purchase:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

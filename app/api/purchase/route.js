@@ -5,11 +5,12 @@ import Stock from "@/models/stock";
 import Purchase from "@/models/purchase";
 
 // Connect to the database
-await connectDB();
 
 // POST: Create a new purchase
 export async function POST(request) {
   try {
+await connectDB();
+
     const { thickness, height, color, company, boughtQty } = await request.json();
 
     // Step 1: Find the exact product
@@ -62,6 +63,8 @@ export async function POST(request) {
 // GET: Fetch all purchase history
 export async function GET() {
   try {
+await connectDB();
+
     const purchases = await Purchase.find({}).populate("product");
     return new Response(JSON.stringify(purchases), {
       status: 200,

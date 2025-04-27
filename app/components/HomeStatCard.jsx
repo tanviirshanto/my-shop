@@ -6,7 +6,7 @@ import React from 'react'
 
 
 async function  HomeStatCard({year, month}) {
-  
+  await connectDB();
   const data = await calculateMonthlyNetProfit(year, month);
   const purchaseAmount = await calculateMonthlyPurchaseTotalAmount(year,month);
   

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Head from "next/head";
 
 export default function ConfigPage() {
   const [config, setConfig] = useState({ thicknesses: [], heights: [], colors: [], companies: [] });
@@ -62,7 +63,10 @@ export default function ConfigPage() {
     }
   };
 
-  return (
+  return (<>
+  <Head >
+Configs
+  </Head>
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold flex text-white justify-center">Configuration</h1>
       {["thicknesses", "heights", "colors", "companies"].map((field) => (
@@ -128,6 +132,6 @@ export default function ConfigPage() {
           </div>
         </div>
       )}
-    </div>
+    </div></>
   );
 }

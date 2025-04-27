@@ -4,12 +4,12 @@ import Invoice from '@/models/invoice';
 import { connectDB } from '@/lib/db';
 import { Sell, Stock, StockBook } from '@/models';
 
-await connectDB();
 
 export async function GET(request, { params }) {
   const { id } = params;
 
   try {
+await connectDB();
     
 
     const invoice = await Invoice.findById(id).populate('customer invoiceItems.product');
@@ -30,6 +30,8 @@ export async function PUT(req, { params }) {
     const { date, customerId, payment, totalAmount, amountPaid, invoiceItems } = await req.json();
   
     try {
+await connectDB();
+
       // Update the invoice date and other details
       const updatedInvoice = await Invoice.findByIdAndUpdate(
         id,
@@ -63,6 +65,8 @@ export async function PUT(req, { params }) {
       const { id } = params;
     
       try {
+await connectDB();
+
         // Fetch the invoice first to access its items
         const invoice = await Invoice.findById(id).populate("invoiceItems.product");
     

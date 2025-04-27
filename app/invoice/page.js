@@ -9,6 +9,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import QuickButtons from "../components/quickButtons";
 import QuickPriceButton from "../components/quickPriceButton";
+import Head from "next/head";
 
 const quantityItems = [
   6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 21, 24, 25, 27, 28, 30, 32, 35, 36, 40,
@@ -238,7 +239,11 @@ const InvoicePage = () => {
     toast("Item loaded for editing");
   };
 
-  return (
+  return (<>
+ <Head>
+      <title>Invoice</title>
+      
+ </Head>
     <div>
       <Link
         href="/invoice-lists"
@@ -469,7 +474,7 @@ const InvoicePage = () => {
           }
         />
       </div>{" "}
-    </div>
+    </div> </>
   );
 };
 

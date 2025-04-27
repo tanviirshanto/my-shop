@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { formatDate } from "@/lib/functions";
+import Head from "next/head";
 
 // Helper: group invoices by date (YYYY-MM-DD)
 function groupInvoicesByDate(invoices) {
@@ -88,7 +89,11 @@ const InvoiceListPage = () => {
   const groupedInvoices = groupInvoicesByDate(invoices);
   const sortedDates = Object.keys(groupedInvoices).sort((a, b) => new Date(b) - new Date(a)); // Latest date first
 
-  return (
+  return (<>
+    <Head>
+         <title>List of Invoices</title>
+         
+    </Head>
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Invoices</h2>
       {invoices.length > 0 ? (
@@ -169,7 +174,7 @@ const InvoiceListPage = () => {
       ) : (
         <p>No invoices found.</p>
       )}
-    </div>
+    </div></>
   );
 };
 

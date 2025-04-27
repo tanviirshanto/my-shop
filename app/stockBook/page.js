@@ -1,4 +1,5 @@
 "use client";
+import { generateRandomText } from "@/utils/functions";
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -35,6 +36,7 @@ function StockBook() {
         `/api/products/bulk`
       );
       setBulk(res.data.variations);
+      console.log("bulk", res.data.variations);
       setTotalPages(res.data.totalPages);
     } catch (error) {
       console.error("Error fetching bulk", error);
@@ -82,12 +84,12 @@ function StockBook() {
         </thead>
         <tbody>
           {bulk.map((variation) => (
-            <tr key={`${variation.thickness}-${variation.color}`}>
+            <tr key={generateRandomText(10)}>
               <td>{variation.thickness} mm</td>
               <td>{variation.color}</td>
               <td>{variation.price}</td>
               <td>
-               {heights.map((value) => <Link href={`/stockBook/${variation.thickness}/${value}/${variation.color}`} key={value} className="mr-3 link link-hover" >{value}</Link>)}
+               {heights.map((value) => <Link href={`/stockBook/${variation.thickness}/${value}/${variation.color}`} key={generateRandomText(10)} className="mr-3 link link-hover" >{value}</Link>)}
               </td>
             </tr>
           ))}

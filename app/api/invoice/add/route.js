@@ -12,10 +12,14 @@ import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
 import { thkGroupOne, thkGroupThree, thkGroupTwo } from "@/lib/constants";
 
-await connectDB();
+
 
 export async function POST(request) {
+
   try {
+
+    await connectDB();
+    
     const body = await request.json();
     console.log("Invoice Body:", body);
 
