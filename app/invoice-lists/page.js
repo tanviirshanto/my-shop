@@ -125,7 +125,7 @@ const InvoiceListPage = () => {
                       <td>{invoice.totalAmount}</td>
                       <td>{invoice.payment}</td>
                       <td className="flex">
-                        <Link href={`/invoice/${invoice._id}`} className="btn btn-sm btn-primary">
+                        <Link href={`/invoice/${invoice._id}`} className="btn btn-sm btn-primary" target="blank">
                           View
                         </Link>
                         <button

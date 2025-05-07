@@ -59,7 +59,7 @@ const InvoicePreview = ({ invoiceData, setInvoiceData, customerName ,onEdit}) =>
   };
 
   return (
-    <div className=" lg:w-1/3 p-4 ">
+    <div className=" p-4 ">
       <h2 className="text-2xl font-bold mb-4"> Preview</h2>
 
       <div ref={invoiceRef}>
