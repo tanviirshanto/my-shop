@@ -1,22 +1,42 @@
 // InvoiceDetailPageClient.jsx (Client Component)
 "use client";
 import { formatDate } from "@/utils/fetchData";
+import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
   const invoiceRef = useRef();
 
+  const router = useRouter();
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const activeTag = document.activeElement.tagName.toLowerCase();
+      if (
+        e.key === "Backspace" &&
+        activeTag !== "input" &&
+        activeTag !== "textarea"
+      ) {
+        e.preventDefault(); // Optional: prevent browser back
+        router.push("/invoice-lists");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [router]);
+
   const [invoiceData, setInvoiceData] = useState(JSON.parse(parsedInvoiceData));
   console.log("Invoice Data:", invoiceData); // Debugging
 
-    // Handle date change
-    const handleDateChange = (e) => {
-      setInvoiceData((prev) => ({
-        ...prev,
-        date: e.target.value,
-      }));
-    };
-  
+  // Handle date change
+  const handleDateChange = (e) => {
+    setInvoiceData((prev) => ({
+      ...prev,
+      date: e.target.value,
+    }));
+  };
 
   const generatePDF = async () => {
     if (!invoiceData) return;
@@ -53,7 +73,7 @@ const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
   const handleSubmit = async () => {
     // Make sure to send the updated invoice data to the backend for saving
     const response = await fetch(`/api/invoice/${invoiceData._id}`, {
-      method: 'PUT', // PUT method for updating the invoice
+      method: "PUT", // PUT method for updating the invoice
       headers: {
         "Content-Type": "application/json",
       },
@@ -69,14 +89,18 @@ const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
 
   return (
     <div className="p-4 flex flex-col items-center">
-      <div className="lg:w-[70%] p-4" ref={invoiceRef} style={{ marginTop: "5%", marginLeft: "5%" }}>
+      <div
+        className="lg:w-[70%] p-4"
+        ref={invoiceRef}
+        style={{ marginTop: "5%", marginLeft: "5%" }}
+      >
         <h2 className="text-2xl font-bold text-left mb-3">
           Invoice ID: {invoiceData._id}
         </h2>
 
         <div>
           <div className="mb-4 text-left  flex flex-col gap-2">
-          <input
+            <input
               type="date"
               value={invoiceData.date.substring(0, 10)} // Ensure date format is YYYY-MM-DD
               onChange={handleDateChange}
@@ -133,7 +157,7 @@ const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
                       {item.product.color}
                     </td>
                     <td style={{ border: "1px solid gray", padding: "8px" }}>
-                      {  item.soldPrice}
+                      {item.soldPrice}
                     </td>
                     <td style={{ border: "1px solid gray", padding: "8px" }}>
                       {item.product.price}
@@ -163,8 +187,8 @@ const InvoiceDetailPageClient = ({ parsedInvoiceData }) => {
         Print PDF
       </button>
       <button onClick={handleSubmit} className="btn btn-success w-56 mt-2">
-            Save Changes
-          </button>
+        Save Changes
+      </button>
     </div>
   );
 };

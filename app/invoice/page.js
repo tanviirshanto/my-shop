@@ -10,11 +10,6 @@ import toast from "react-hot-toast";
 import QuickButtons from "../components/quickButtons";
 import Head from "next/head";
 
-const quantityItems = [
-  6, 7, 8, 9, 10, 12, 14, 16, 18, 20, 21, 24, 25, 27, 28, 30, 32, 35, 36, 40,
-  42, 45, 49, 50, 60, 70, 80, 90, 100, 120, 282,
-];
-
 const InvoicePage = () => {
   const [singleItem, setSingleItem] = useState({
     product: { thickness: "", height: "", color: "", price: 0 },
@@ -105,40 +100,56 @@ const InvoicePage = () => {
   };
 
   const addItem = () => {
-    if (
-      !singleItem.product.thickness ||
-      !singleItem.product.height ||
-      !singleItem.product.color ||
-      !singleItem.product.price ||
-      !singleItem.soldQty
-    ) {
+    const { height, thickness, color, price } = singleItem.product;
+  
+    // Check if any required field is empty
+    if (!thickness || !height || !color || !price || !singleItem.soldQty) {
       toast.error("Please fill in all item details.");
       return;
     }
+  
+    // Validate presence in suggestions
+    const isValidThickness = config.thicknesses.includes(thickness);
+    const isValidHeight = config.heights.includes(height);
+    const isValidColor = config.colors.includes(color);
+  
+    if (!isValidHeight) {
+      toast.error("Height is invalid. Please select a value from suggestions.");
+      return;
+    }
 
+    if (!isValidThickness) {
+      toast.error("Thickness is invalid. Please select a value from suggestions.");
+      return;
+    }
+
+    if (!isValidColor) {
+      toast.error("Color is invalid. Please select a value from suggestions.");
+      return;
+    }
+  
     if (singleItem.soldQty <= 0) {
       toast.error("Quantity must be greater than zero.");
       return;
     }
-
-    if (singleItem.product.price < 0) {
+  
+    if (price < 0) {
       toast.error("Price cannot be negative.");
       return;
     }
-
+  
     setInvoiceData((prev) => ({
       ...prev,
       invoiceItems: [...prev.invoiceItems, singleItem],
     }));
-
+  
     setItemPrices((prevPrices) => {
-      if (!prevPrices.includes(singleItem.product.price)) {
-        return [...prevPrices, singleItem.product.price];
+      if (!prevPrices.includes(price)) {
+        return [...prevPrices, price];
       }
       return prevPrices;
     });
-
-    // Reset the singleItem form
+  
     setSingleItem((prevSingleItem) => ({
       ...prevSingleItem,
       product: {
@@ -151,10 +162,11 @@ const InvoicePage = () => {
       soldQty: 0,
       itemTotal: 0,
     }));
-    // Focus Sold Quantity input
+  
     setTimeout(() => soldQtyRef.current?.focus(), 0);
     toast.success("Item added to invoice");
   };
+  
 
   const handleSubmit = async (e) => {
     setLoading(true);
@@ -302,11 +314,7 @@ const InvoicePage = () => {
             <h2 className="text-2xl font-bold mb-4">Invoice Form</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <QuickButtons
-                  setSingleItem={setSingleItem}
-                  quantityItems={quantityItems}
-                  itemPrices={itemPrices}
-                />
+               
                 <div className="flex justify-between items-end gap-5">
                   <div className="form-control w-full">
                     <label className="label">
@@ -315,7 +323,7 @@ const InvoicePage = () => {
                     <input
                       ref={(el) => {
                         soldQtyRef.current = el; // Attach ref here
-                        if (el && !inputRefs.current.includes(el)) {
+                        if (el && !inputRefs.current.some(ref => ref === el)) {
                           inputRefs.current.push(el);
                         }
                       }}
@@ -338,7 +346,7 @@ const InvoicePage = () => {
                     </label>
                     <input
                       ref={(el) => {
-                        if (el && !inputRefs.current.includes(el)) {
+                        if (el && !inputRefs.current.some(ref => ref === el)) {
                           inputRefs.current.push(el);
                         }
                       }}
@@ -357,7 +365,7 @@ const InvoicePage = () => {
                     </label>
                     <input
                       ref={(el) => {
-                        if (el && !inputRefs.current.includes(el)) {
+                        if (el && !inputRefs.current.some(ref => ref === el)) {
                           inputRefs.current.push(el);
                         }
                       }}
@@ -385,7 +393,7 @@ const InvoicePage = () => {
                     </label>
                     <input
                       ref={(el) => {
-                        if (el && !inputRefs.current.includes(el)) {
+                        if (el && !inputRefs.current.some(ref => ref === el)) {
                           inputRefs.current.push(el);
                         }
                       }}
@@ -412,7 +420,7 @@ const InvoicePage = () => {
                     </label>
                     <input
                      ref={(el) => {
-                      if (el && !inputRefs.current.includes(el)) {
+                      if (el && !inputRefs.current.some(ref => ref === el)) {
                         inputRefs.current.push(el);
                       }
                     }}
